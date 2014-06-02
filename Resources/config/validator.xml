@@ -1,0 +1,11 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="infinite_import.validator.supported_file_type" class="Infinite\ImportBundle\Constraint\SupportedFileTypeValidator">
+            <argument type="service" id="infinite_import.converter_factory" />
+            <tag name="validator.constraint_validator" alias="infinite_import_supported_file" />
+        </service>
+    </services>
+</container>

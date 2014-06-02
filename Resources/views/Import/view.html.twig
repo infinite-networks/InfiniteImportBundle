@@ -1,0 +1,44 @@
+{% extends "InfiniteImportBundle::layout.html.twig" %}
+
+{% set import = data.import %}
+
+{% block infinite_import_content %}
+<h1>Import {{ import.filename }} from {{ import.dateUploaded.format('c') }}</h1>
+
+<p>{{ import.status | trans }}</p>
+{% if import.status == constant('STATUS_READY_TO_START', import) %}
+<form action="{{ path('infinite_import_start', { id: import.id }) }}" method="post">
+    <button type="submit">Start</button>
+</form>
+{% endif %}
+{% if import.status == constant('STATUS_NEEDS_PROCESSING', import) %}
+<a href="{{ path('infinite_import_process_start', { id: import.id }) }}">Set up import</a>
+{% endif %}
+{% if import.status == constant('STATUS_IMPORTING', import) %}
+<p>Currently importing.</p>
+{% endif %}
+{% if import.dateFinished %}
+<p>Finished: {{ import.dateFinished.format('c') }}</p>
+{% endif %}
+
+<h2>Progress</h2>
+<div id="progress">
+    <span id="processed-lines">{{ import.linesProcessed }}</span> / <span id="total-lines">{{ import.numLines }}</span>
+</div>
+
+<h3>Log</h3>
+Put a log of importness here?
+
+<h2>Metadata</h2>
+<table>
+    {% set firstLine = import.firstLine %}
+    {% for metadata in import.fieldMetadata %}
+    <tr>
+        <th>{{ metadata.field }}</th>
+        <td>{{ metadata.populateWith }}</td>
+        <td>{{ firstLine.data[metadata.populateWith] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock infinite_import_content %}

@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping
+        http://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+
+    <class name="Infinite\ImportBundle\Upload\UploadCommand">
+        <property name="file">
+            <constraint name="NotBlank">
+                <option name="message">infinite_import.upload.upload_command.blank</option>
+            </constraint>
+            <constraint name="Infinite\ImportBundle\Constraint\SupportedFileType" />
+        </property>
+    </class>
+</constraint-mapping>

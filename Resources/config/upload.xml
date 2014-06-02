@@ -1,0 +1,15 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="infinite_import.form_type.upload_command" class="Infinite\ImportBundle\Form\Type\UploadCommandType">
+            <tag name="form.type" alias="infinite_import_upload" />
+        </service>
+
+        <service id="infinite_import.upload.processor" class="Infinite\ImportBundle\Upload\Processor">
+            <argument type="service" id="infinite_import.converter_factory" />
+            <argument type="service" id="security.context" />
+        </service>
+    </services>
+</container>

@@ -1,0 +1,13 @@
+{% macro import_class(import) -%}
+{% if import.status in [constant('STATUS_ERRORS', import), constant('STATUS_STALLED', import)] %}
+{% set class = 'danger' %}
+{% elseif import.status in [constant('STATUS_READY_TO_START', import), constant('STATUS_NEEDS_PROCESSING', import)] %}
+{% set class = 'info' %}
+{% elseif import.status in [constant('STATUS_FINISHED', import)] %}
+{% set class = 'success' %}
+{% elseif import.status in [constant('STATUS_IMPORTING', import)] %}
+{% set class = 'info' %}
+{% endif %}
+
+{{ class }}
+{%- endmacro %}

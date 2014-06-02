@@ -1,0 +1,26 @@
+{% extends "InfiniteImportBundle::layout.html.twig" %}
+
+{% block infinite_import_content %}
+<h1>Imports ready for processing</h1>
+
+<a href="{{ path('infinite_import_upload') }}">Upload new file</a>
+
+<table>
+    <thead><tr>
+        <th>Date</th>
+        <th>Filename</th>
+        <th>Size</th>
+        <th>Lines</th>
+    </tr></thead>
+    <tbody>
+    {% for import in data.imports %}
+        <tr>
+            <td><a href="{{ import.processorKey ? path('infinite_import_process_detail', { id: import.id }) : path('infinite_import_process_process', { id: import.id, processor: processor.key }) }}">{{ import.dateUploaded.format('c') }}</a></td>
+            <td>{{ import.filename }}</td>
+            <td>{{ import.size }} bytes</td>
+            <td>{{ import.numLines }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock infinite_import_content %}

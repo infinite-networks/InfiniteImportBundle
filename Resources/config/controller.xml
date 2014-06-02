@@ -1,0 +1,28 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="infinite_import.controller.base" abstract="true">
+            <property name="router" type="service" id="router" />
+            <property name="templating" type="service" id="templating" />
+        </service>
+
+        <service id="infinite_import.controller.import" class="Infinite\ImportBundle\Controller\ImportController" parent="infinite_import.controller.base">
+            <property name="doctrine" type="service" id="doctrine.orm.entity_manager" />
+            <property name="importScheduler" type="service" id="infinite_import.import.scheduler" />
+            <property name="session" type="service" id="session" />
+        </service>
+
+        <service id="infinite_import.controller.process" class="Infinite\ImportBundle\Controller\ProcessController" parent="infinite_import.controller.base">
+            <property name="doctrine" type="service" id="doctrine.orm.entity_manager" />
+            <property name="processorFactory" type="service" id="infinite_import.processor_factory" />
+        </service>
+
+        <service id="infinite_import.controller.upload" class="Infinite\ImportBundle\Controller\UploadController" parent="infinite_import.controller.base">
+            <property name="doctrine" type="service" id="doctrine.orm.entity_manager" />
+            <property name="formFactory" type="service" id="form.factory" />
+            <property name="processor" type="service" id="infinite_import.upload.processor" />
+        </service>
+    </services>
+</container>

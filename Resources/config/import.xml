@@ -1,0 +1,22 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="infinite_import.import.event_listener" class="Infinite\ImportBundle\EventListener\ImportListener">
+            <argument type="service" id="infinite_import.import.scheduler" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="infinite_import.import.scheduler" class="Infinite\ImportBundle\Import\ImportScheduler">
+            <argument type="service" id="infinite_import.import.importer" />
+            <argument type="service" id="monolog.logger" />
+        </service>
+
+        <service id="infinite_import.import.importer" class="Infinite\ImportBundle\Import\Importer">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="infinite_import.processor_factory" />
+            <argument type="service" id="validator" />
+        </service>
+    </services>
+</container>

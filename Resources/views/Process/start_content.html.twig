@@ -1,0 +1,47 @@
+{% extends "InfiniteImportBundle::layout.html.twig" %}
+
+{% set import = data.import %}
+
+{% block infinite_import_content %}
+<div class="row">
+    <div class="col-md-6">
+    {% embed "InfiniteImportBundle:Import:summary.html.twig" %}
+        {% block summary_title %}Process {{ parent() }}{% endblock summary_title %}
+        {% block body %}
+            <p>
+                Select which kind of processor you want to use to process this file. Each
+                processor takes different kinds of data and may need additional
+                configuration on the next step of the process to understand the format
+                of the data file you uploaded.
+            </p>
+        {% endblock body %}
+    {% endembed %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+{% for processor in data.processors %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong><i class="fa fa-file"></i> {{ ('processor_' ~ processor.key) | trans }}</strong>
+        </div>
+
+        <div class="panel-body">
+            {{ block('processor_' ~ processor.key) }}
+        </div>
+    </div>
+{% else %}
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <strong><i class="fa fa-warning"></i> No Processors Available</strong>
+    </div>
+
+    <div class="panel-body">
+        <p>There are no processors registered.</p>
+    </div>
+</div>
+{% endfor %}
+    </div>
+</div>
+{% endblock infinite_import_content %}

@@ -1,0 +1,101 @@
+{% extends "::blank.html.twig" %}
+
+{% block content %}
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <strong><i class="fa fa-info"></i> {% block summary_title %}Import #{{ import.id }}{% endblock summary_title %}</strong>
+    </div>
+
+    <div class="panel-body">
+        {% block body '' %}
+    </div>
+
+    <table class="table">
+        <tr>
+            <th>Filename</th>
+            <td>{{ import.filename }}</td>
+        </tr>
+        <tr>
+            <th>Uploaded</th>
+            <td>{{ import.dateUploaded.format(site.formats.datetime) }}</td>
+        </tr>
+        <tr>
+            <th>Size</th>
+            <td>{{ import.size }} bytes</td>
+        </tr>
+        <tr>
+            <th>Rows</th>
+            <td>{{ import.numLines }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <strong><i class="fa fa-info"></i> {% block headers_title %}Import Headers{% endblock headers_title %}</strong>
+    </div>
+
+    <div class="panel-body">
+        <p>Example data that is contained in the first data row of this import.</p>
+    </div>
+
+    <table class="table">
+        <thead><tr>
+            <th>Column &rarr; Field</th>
+            <th>Example Data</th>
+        </tr></thead>
+
+        {% set line = import.firstLine %}
+        {% if not import.processorKey %}
+            {% for header, value in line.data %}
+            <tr>
+                <td>{{ header }} &rarr; Not Configured</td>
+                <td>{{ value }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2">Import not configured.</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            {% for metadata in import.fieldMetadata %}
+            <tr>
+                <td>{{ metadata.field }}{% if metadata.populateWith is not sameas(null) %} &rarr; {{ metadata.populateWith }}{% endif %}</td>
+                <td>{% if metadata.populateWith is not sameas(null) %}{{ line.data[metadata.populateWith] }}{% else %}Not provided{% endif %}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2">Import not configured.</td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+</div>
+
+{% if import.metadata | length %}
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <strong><i class="fa fa-info"></i> {% block headers_configuration %}Import Configuration{% endblock headers_configuration %}</strong>
+    </div>
+
+    <div class="panel-body">
+        <p>This import has additional configuration specified.</p>
+    </div>
+
+    <table class="table">
+        <thead><tr>
+            <th>Setting</th>
+            <th>Value</th>
+        </tr></thead>
+
+        {% for setting, value in import.metadata %}
+        <tr>
+            <td>{{ ('import.field.label.' ~ import.processorKey ~ '.' ~ setting) | trans }}</td>
+            <td>{{ value }}</td>
+        </tr>
+
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+{% endblock content %}

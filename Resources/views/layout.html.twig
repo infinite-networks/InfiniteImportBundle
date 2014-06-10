@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8" />
-    </head>
-    <body>
-        <div>
-            {% block infinite_import_content '' %}
-        </div>
-    </body>
-</html>
+{% extends "::base.html.twig" %}
+
+{% block body %}
+<div class="page">
+    {% block infinite_import_content '' %}
+</div>
+{% endblock body %}

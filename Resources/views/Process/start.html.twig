@@ -1,15 +1,1 @@
-{% extends "InfiniteImportBundle::layout.html.twig" %}
-
-{% set import = data.import %}
-
-{% block infinite_import_content %}
-<h1>Process import {{ import.filename }} from {{ import.dateUploaded.format('c') }}</h1>
-
-{% for processor in data.processors %}
-<h2>{{ ('processor_' ~ processor.key) | trans }}</h2>
-
-{{ block('processor_' ~ processor.key) }}
-{% else %}
-<p>There are no processors registered.</p>
-{% endfor %}
-{% endblock infinite_import_content %}
+{% extends "InfiniteImportBundle:Process:start_content.html.twig" %}

@@ -1,0 +1,79 @@
+{% extends "InfiniteImportBundle::layout.html.twig" %}
+
+{% set form = data.form %}
+
+{% block infinite_import_content %}
+<div class="row">
+    <div class="col-md-6">
+        <section class="panel panel-default">
+            <div class="panel-heading">
+                <strong>
+                    <span class="fa fa-upload"></span>
+                    Upload file for processing
+                </strong>
+            </div>
+
+            {{ form_start(form) }}
+            <div class="panel-body">
+                <p>
+                    Upload a new file for processing here. Make sure you indicate if the
+                    file has a named header row. This option cannot be changed after
+                    uploading the file.
+                </p>
+
+                {% if data.result %}
+                {# We had a failure #}
+                <div class="alert alert-error">
+                <h1>ERROR</h1>
+                <p>
+                    We could not do the initial processing of the file you uploaded. There were errors
+                    while it was being uploaded. The import cannot proceed. Please fix the errors below
+                    before continuing.
+                </p>
+                {% for error in data.result.conversionResult.errors %}
+                <p>Error: {{ error.error }}</p>
+                {% endfor %}
+                </div>
+                {% endif %}
+
+                {{ form_row(form.file, {
+                    label: 'File',
+                    help: 'Select a file to upload.'
+                }) }}
+
+                {{ form_row(form.hasHeaders, {
+                    help: 'This option should be selected if you exported a file that
+                           contains column header names as the first row.',
+                    label: 'File contains a header row'
+                }) }}
+
+                {{ form_row(form.submit, {
+                    attr: {
+                        class: 'btn btn-primary'
+                    },
+                    label: '<i class="fa fa-cloud-upload"></i> Upload file',
+                    safe_label: true
+                }) }}
+            </div>
+            {{ form_end(form) }}
+        </section>
+    </div>
+
+    <div class="col-md-6">
+        <section class="panel panel-info">
+            <div class="panel-heading">
+                <strong>
+                    <span class="fa fa-info"></span>
+                    About the Importer
+                </strong>
+            </div>
+
+            <div class="panel-body">
+                <p>
+                    Help about the importer and what it actually does here.
+                </p>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock infinite_import_content %}

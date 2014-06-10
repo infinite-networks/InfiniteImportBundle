@@ -1,0 +1,126 @@
+{% extends "InfiniteImportBundle::layout.html.twig" %}
+{% import "InfiniteImportBundle::macros.html.twig" as import_macros %}
+
+{% set import = data.import %}
+
+{% block infinite_import_content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong><i class="fa fa-info"></i> Import Information</strong></div>
+            <div class="panel-body">
+                <p>
+                    This screen shows our progress as we process your import, and lists any
+                    errors that may have occurred while we process the information, for
+                    example any invalid ABN numbers we've found.
+                </p>
+            </div>
+
+            <table class="table">
+                <tr class="{{ import_macros.import_class(import) }}">
+                    <th>Status</th>
+                    <td>{{ import.status | trans }}</td>
+                </tr>
+                <tr>
+                    <th>Date Uploaded</th>
+                    <td>{{ import.dateUploaded.format(site.formats.datetime) }}</td>
+                </tr>
+                <tr>
+                    <th>Date Started</th>
+                    <td>{% if import.dateStarted %}{{ import.dateStarted.format(site.formats.datetime) }}{% else %}Not started{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>Date Finished</th>
+                    <td>{% if import.dateFinished %}{{ import.dateFinished.format(site.formats.datetime) }}{% else %}{% if import.dateStarted %}Not finished{% else %}Not started{% endif %}{% endif %}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        {% if import.status == constant('STATUS_READY_TO_START', import) %}
+                        <form action="{{ path('infinite_import_start', { id: import.id }) }}" method="post">
+                            <button type="submit" class="btn btn-success btn-block"><i class="fa fa-hdd-o"></i> Start Import</button>
+                        </form>
+                        {% endif %}
+                        {% if import.status == constant('STATUS_STALLED', import) %}
+                        <form action="{{ path('infinite_import_start', { id: import.id }) }}" method="post">
+                            <button type="submit" class="btn btn-success btn-block"><i class="fa fa-refresh"></i> Restart Import</button>
+                        </form>
+                        {% endif %}
+                        {% if import.status not in [constant('STATUS_FINISHED', import), constant('STATUS_ERRORS', import)] %}
+                        <a class="btn btn-info btn-block" href="{{ path('infinite_import_process_start', { id: import.id }) }}"><i class="fa fa-cog"></i> {% if import.status == constant('STATUS_NEEDS_PROCESSING', import) %}C{% else %}Rec{% endif %}onfigure Import</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong><i class="fa fa-spinner"></i> Progress</strong></div>
+            <div class="panel-body">
+                <p>
+                    The page will periodically refresh to update the progress of the
+                    import. A large import may take some time to process.
+                </p>
+
+                <div class="progress{% if import.running and import.checkHeartbeat %} progress-striped active{% endif %}">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="20" aria-valuemax="100" style="width: {{ min(100, max(20, (import.linesProcessed / import.numLines) * 100)) }}%">
+                        <span><span id="processed">{{ import.linesProcessed }}</span> / {{ import.numLines }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        {% embed "InfiniteImportBundle:Import:summary.html.twig" %}
+        {% endembed %}
+    </div>
+</div>
+
+{% if import.hasErrors %}
+{% set firstMetadata = import.fieldMetadata.first() %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-danger">
+            <div class="panel-heading"><strong><i class="fa fa-warning"></i> Import Errors</strong></div>
+            <div class="panel-body">
+                <p>
+                    There have been errors with this import, please review the errors
+                    below. Each error will indicate which line number the error occurred
+                    on, and in most cases indicate the reason for the error.
+                </p>
+            </div>
+
+            <table class="table">
+                <thead><tr>
+                    <th>Line Number</th>
+                    <th>First Column</th>
+                    <th>Error</th>
+                </tr></thead>
+
+                {% for errorLine in import.errorLines %}
+                {% for log in errorLine.log %}
+                <tr class="danger">
+                    <td># {{ errorLine.line }}</td>
+                    <td>{{ errorLine.data[firstMetadata.populateWith] }}</td>
+                    <td>{{ log }}</td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock infinite_import_content %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    var progressBar = $('.progress');
+
+    if (progressBar.is('.active')) {
+        setTimeout(function () { window.location.reload(); }, 5000);
+    }
+</script>
+{% endblock javascripts %}

@@ -1,0 +1,96 @@
+{% extends "InfiniteImportBundle::layout.html.twig" %}
+
+{% set form = data.form %}
+{% set import = data.import %}
+{% set processor = data.processor %}
+
+{% form_theme form.fields _self %}
+
+{% block infinite_import_content %}
+<div class="row">
+    <div class="col-md-6">
+
+        {{ form_start(form) }}
+        <div class="panel panel-warning">
+            <div class="panel-heading"><strong><i class="fa fa-cog"></i> Configure Import Data</strong></div>
+            <div class="panel-body">
+                <p>
+                    Select which columns of your file match the expected data format for
+                    the importer.
+                </p>
+                <p>
+                    Required fields are indicated by an * next to the field name, and must
+                    be supplied in a data upload for this importer to process the file.
+                    Other fields which are not required do not have to be provided and can
+                    be skipped, the importer will still import users but not match the
+                    missing information.
+                </p>
+                <p>
+                    The dropdown mapping column lets you select which column of your file
+                    to map the data to. If your file has headers, the header name and an
+                    example from the first row will be presented to you. If there are no
+                    headers, you will be given a 0-indexed column number with example
+                    information.
+                </p>
+
+                {% for field in form if field.vars.name not in ['fields', 'submit'] %}
+                    {{ form_row(field, {
+                        help: ('import.field.help.' ~ import.processorKey ~ '.' ~ field.vars.name) | trans,
+                        label: ('import.field.label.' ~ import.processorKey ~ '.' ~ field.vars.name) | trans,
+                    }) }}
+                {% endfor %}
+            </div>
+
+            <table class="table">
+                <thead><tr>
+                    <th>Field</th>
+                    <th>Mapped to</th>
+                </tr></thead>
+                <tbody>
+                {% for formField in form.fields %}
+                    {% set field = formField.vars.value %}
+                    <tr>
+                        <td>
+                            {% if field.required %}
+                            <strong>{{ field.name }} *</strong>
+                            {% else %}
+                            {{ field.name }}
+                            {% endif %}
+                        </td>
+                        <td>{{ form_widget(formField.populateWith) }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <p>{{ ('import.description.' ~ import.processorKey ~ '.' ~ (field.translationName | lower)) | trans }}</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="panel-body">
+                {{ form_row(form.submit, {
+                    attr: {
+                        class: 'btn btn-primary',
+                    },
+                    label: '<i class="fa fa-cog"></i> Configure Import',
+                    safe_label: true
+                }) }}
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+    <div class="col-md-6">
+        {% embed "InfiniteImportBundle:Import:summary.html.twig" %}
+            {% block body %}
+                <p>
+                    You have selected the importer
+                    <em>{{ ('processor_' ~ processor.key) | trans }}</em> to process this
+                    file and it requires additional configuration of which columns of
+                    your file match required information of the importer.
+                </p>
+            {% endblock body %}
+        {% endembed %}
+    </div>
+</div>
+{% endblock infinite_import_content %}

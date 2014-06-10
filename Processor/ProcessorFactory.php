@@ -20,7 +20,7 @@ class ProcessorFactory
     /**
      * @var ProcessorInterface[]
      */
-    private $processors;
+    private $processors = array();
 
     /**
      * @var \Symfony\Component\Security\Core\SecurityContextInterface

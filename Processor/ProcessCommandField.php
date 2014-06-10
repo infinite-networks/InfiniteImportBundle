@@ -57,4 +57,9 @@ class ProcessCommandField
             $context->addViolationAt('populatedWith', 'A required selection is missing');
         }
     }
+
+    public function getTranslationName()
+    {
+        return str_replace(' ', '_', $this->name);
+    }
 }

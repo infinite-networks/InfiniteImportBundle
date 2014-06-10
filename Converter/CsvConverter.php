@@ -102,12 +102,15 @@ class CsvConverter implements ConverterInterface
      */
     private function sanitiseValue($value)
     {
+        // Handle poorly encoded documents. We always use UTF8
+        $value = utf8_encode($value);
+
         // Remove the = and " from a CSV value like ="VALUE", which can be used to trick
         // Excel into keeping numbers sanely.
         $value = preg_replace('/^="(.*)"$/', '\1', $value);
 
         // Trim whitespace and quotes from around values.
-        $value = trim(utf8_encode($value), " \t\n\r\0\x0B\"'");
+        $value = trim($value, " \t\n\r\0\x0B\"'");
 
         return $value;
     }

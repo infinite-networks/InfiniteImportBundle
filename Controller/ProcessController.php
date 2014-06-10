@@ -62,6 +62,7 @@ class ProcessController extends BaseController
     {
         $import = $this->getImport($id);
         $processor = $this->processorFactory->getProcessor($processor);
+        $import->setProcessorKey($processor->getKey());
 
         $command = $processor->buildCommand($import);
         $form = $processor->getProcessForm($request, $command);

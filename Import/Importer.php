@@ -55,23 +55,25 @@ class Importer
      * Run an import.
      *
      * @param Import $import
+     * @param callable $updateClosure
      */
-    public function import(Import $import)
+    public function import(Import $import, $updateClosure = null)
     {
         $this->validate($import);
 
         $iterator = $this->getIterator($import);
         $processor = $this->processorFactory->getProcessor($import->getProcessorKey());
 
-        $this->batchImport($iterator, $import, $processor);
+        $this->batchImport($iterator, $import, $processor, $updateClosure);
     }
 
     /**
      * @param \Infinite\ImportBundle\Entity\ImportLine[] $iterator
      * @param Import $import
      * @param ProcessorInterface $processor
+     * @param callable $updateClosure
      */
-    private function batchImport($iterator, Import $import, ProcessorInterface $processor)
+    private function batchImport($iterator, Import $import, ProcessorInterface $processor, $updateClosure = null)
     {
         $importer = $processor->getImporter();
 
@@ -97,6 +99,9 @@ class Importer
             }
 
             $import->incLinesProcessed(1);
+            if (null !== $updateClosure) {
+                $updateClosure($import, $line);
+            }
 
             if ($import->isAbort() or !(++$i % $this->batchSize)) {
                 $import->setHeartbeat(new \DateTime);

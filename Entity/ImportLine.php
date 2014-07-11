@@ -45,6 +45,7 @@ class ImportLine
     protected $error = false;
 
     /**
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="Infinite\ImportBundle\Entity\Import", inversedBy="lines")
      * @var Import
      */

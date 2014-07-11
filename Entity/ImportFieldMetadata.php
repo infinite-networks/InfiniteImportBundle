@@ -27,6 +27,7 @@ class ImportFieldMetadata
     protected $id;
 
     /**
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="Infinite\ImportBundle\Entity\Import", inversedBy="fieldMetadata")
      * @var Import
      */

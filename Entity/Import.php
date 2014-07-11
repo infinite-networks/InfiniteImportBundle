@@ -106,6 +106,7 @@ class Import
     protected $heartbeat;
 
     /**
+     * @ORM\JoinTable(joinColumns={@ORM\JoinColumn(onDelete="CASCADE")})
      * @ORM\OneToMany(
      *   targetEntity="Infinite\ImportBundle\Entity\ImportLine",
      *   mappedBy="import",

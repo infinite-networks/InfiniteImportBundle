@@ -76,6 +76,7 @@ class Importer
         $import->setRunning(true);
         $import->setHeartbeat(new \DateTime);
         $this->entityManager->flush($import);
+        $importer->batchClean();
 
         foreach ($iterator as $line) {
             /** @var \Infinite\ImportBundle\Entity\ImportLine $line */

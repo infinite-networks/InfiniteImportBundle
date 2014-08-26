@@ -18,8 +18,9 @@ use Infinite\ImportBundle\Entity\ImportLine;
 interface ImporterInterface
 {
     /**
-     * This method is called when a batch has been imported and any clean up or
-     * reinitialisation of variables is required for this processor.
+     * This method is called before every batch to allow the Importer state to
+     * survive an EntityManager#clear() operation or get its state ready for
+     * the import.
      */
     public function batchClean();
 

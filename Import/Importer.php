@@ -20,13 +20,6 @@ use Symfony\Component\Validator\ValidatorInterface;
 class Importer
 {
     /**
-     * The number of lines to process in a batch.
-     *
-     * @var int
-     */
-    private $batchSize = 20;
-
-    /**
      * @var \Doctrine\ORM\EntityManager
      */
     private $entityManager;
@@ -103,7 +96,7 @@ class Importer
                 $updateClosure($import, $line);
             }
 
-            if ($import->isAbort() or !(++$i % $this->batchSize)) {
+            if ($import->isAbort() or $this->shouldBatch($processor, ++$i)) {
                 $import->setHeartbeat(new \DateTime);
                 $this->entityManager->flush();
                 $this->entityManager->clear();
@@ -136,6 +129,23 @@ class Importer
         $qb->setParameter('importId', $import->getId());
 
         return $qb->getQuery()->iterate();
+    }
+
+    /**
+     * Have we done enough iterations to batch?
+     *
+     * @param ProcessorInterface $processor
+     * @param int $i
+     * @return bool
+     */
+    private function shouldBatch(ProcessorInterface $processor, $i)
+    {
+        $batchSize = $processor->getBatchSize();
+        if ($batchSize === false) {
+            return false;
+        }
+
+        return !($i % $batchSize);
     }
 
     /**

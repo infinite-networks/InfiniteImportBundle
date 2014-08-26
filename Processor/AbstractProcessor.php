@@ -13,6 +13,7 @@ namespace Infinite\ImportBundle\Processor;
 
 use Infinite\ImportBundle\Entity\Import;
 use Infinite\ImportBundle\Entity\ImportFieldMetadata;
+use Infinite\ImportBundle\Import\Importer;
 use Infinite\ImportBundle\Import\ImporterInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -76,6 +77,17 @@ abstract class AbstractProcessor implements ProcessorInterface
      * @return ProcessCommandField[]
      */
     abstract protected function buildCommandFields();
+
+    /**
+     * Returns the size of the batch. If false is returned the importer will
+     * not batch the import.
+     *
+     * @return int
+     */
+    public function getBatchSize()
+    {
+        return 20;
+    }
 
     /**
      * Returns an Importer that can be used for this processor metadata.

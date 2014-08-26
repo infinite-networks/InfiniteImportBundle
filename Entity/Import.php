@@ -162,6 +162,7 @@ class Import
     protected $size = 0;
 
     /**
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="Symfony\Component\Security\Core\User\UserInterface")
      * @var \Symfony\Component\Security\Core\User\UserInterface
      */

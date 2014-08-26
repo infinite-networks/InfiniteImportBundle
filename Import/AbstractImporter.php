@@ -31,6 +31,11 @@ abstract class AbstractImporter implements ImporterInterface
         // No batch cleaning required for a basic importer.
     }
 
+    public function finalise(Import $import)
+    {
+        // No finalisation required for a base importer
+    }
+
     /**
      * Returns field mappings.
      *

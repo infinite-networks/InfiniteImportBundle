@@ -24,6 +24,14 @@ interface ImporterInterface
     public function batchClean();
 
     /**
+     * Called once the import is finished. This is called only if the import was
+     * not aborted.
+     *
+     * @param Import $import
+     */
+    public function finalise(Import $import);
+
+    /**
      * This method gets called for each import line during an import.
      *
      * @param Import $import

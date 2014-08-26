@@ -111,6 +111,7 @@ class Importer
         }
 
         if (!$import->isAbort()) {
+            $importer->finalise($import);
             $import->setLinesProcessed($import->getNumLines());
         }
         $import->setDateFinished(new \DateTime);

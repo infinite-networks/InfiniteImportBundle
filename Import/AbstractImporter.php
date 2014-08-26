@@ -26,7 +26,7 @@ abstract class AbstractImporter implements ImporterInterface
      * This method is called when a batch has been imported and any clean up or
      * reinitialisation of variables is required for this processor.
      */
-    public function batchClean()
+    public function batchClean(Import $import)
     {
         // No batch cleaning required for a basic importer.
     }

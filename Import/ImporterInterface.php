@@ -22,7 +22,7 @@ interface ImporterInterface
      * survive an EntityManager#clear() operation or get its state ready for
      * the import.
      */
-    public function batchClean();
+    public function batchClean(Import $import);
 
     /**
      * Called once the import is finished. This is called only if the import was

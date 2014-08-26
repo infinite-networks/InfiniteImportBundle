@@ -76,7 +76,7 @@ class Importer
         $import->setRunning(true);
         $import->setHeartbeat(new \DateTime);
         $this->entityManager->flush($import);
-        $importer->batchClean();
+        $importer->batchClean($import);
 
         foreach ($iterator as $line) {
             /** @var \Infinite\ImportBundle\Entity\ImportLine $line */
@@ -103,7 +103,7 @@ class Importer
                 $this->entityManager->clear();
 
                 $import = $this->entityManager->merge($import);
-                $importer->batchClean();
+                $importer->batchClean($import);
             }
 
             if ($import->isAbort()) {

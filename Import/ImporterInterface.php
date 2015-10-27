@@ -21,8 +21,11 @@ interface ImporterInterface
      * This method is called before every batch to allow the Importer state to
      * survive an EntityManager#clear() operation or get its state ready for
      * the import.
+     *
+     * @param Import $import
+     * @param int $lineNum
      */
-    public function batchClean(Import $import);
+    public function batchClean(Import $import, $lineNum);
 
     /**
      * Called once the import is finished. This is called only if the import was

@@ -1,14 +1,14 @@
 infinite_import_process_start:
-    pattern: /process/{id}
+    path: /process/{id}
     defaults:
         _controller: infinite_import.controller.process:startAction
 
 infinite_import_process_process:
-    pattern: /process/{id}/{processor}
+    path: /process/{id}/{processor}
     defaults:
         _controller: infinite_import.controller.process:processAction
 
 infinite_import_process_list:
-    pattern: /process
+    path: /process
     defaults:
         _controller: infinite_import.controller.process:listAction

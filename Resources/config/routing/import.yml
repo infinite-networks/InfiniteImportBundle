@@ -1,18 +1,18 @@
 infinite_import_list:
-    pattern: /
+    path: /
     defaults:
         _controller: infinite_import.controller.import:listAction
 
 infinite_import_view:
-    pattern: /{id}
+    path: /{id}
     defaults:
         _controller: infinite_import.controller.import:viewAction
     requirements:
         id: \d+
 
 infinite_import_start:
-    pattern: /{id}/start
+    path: /{id}/start
     defaults:
         _controller: infinite_import.controller.import:startAction
     requirements:
-        _method: POST
+        methods: POST

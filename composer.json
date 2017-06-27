@@ -10,7 +10,8 @@
     "require": {
         "symfony/framework-bundle": "~2.3",
         "symfony/validator": "~2.3",
-        "white-october/pagerfanta-bundle": "1.0.*"
+        "white-october/pagerfanta-bundle": "1.0.*",
+        "doctrine/orm": "~2.5"
     },
     "extra": {
         "branch-alias": {

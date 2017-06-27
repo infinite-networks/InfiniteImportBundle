@@ -11,8 +11,13 @@
 
 namespace Infinite\ImportBundle\Import;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Internal\Hydration\IterableResult;
+use Doctrine\ORM\ORMException;
 use Infinite\ImportBundle\Entity\Import;
+use Infinite\ImportBundle\Entity\ImportLine;
 use Infinite\ImportBundle\Processor\ProcessorFactory;
 use Infinite\ImportBundle\Processor\ProcessorInterface;
 use Symfony\Component\Validator\ValidatorInterface;
@@ -20,9 +25,9 @@ use Symfony\Component\Validator\ValidatorInterface;
 class Importer
 {
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var ManagerRegistry
      */
-    private $entityManager;
+    private $managerRegistry;
 
     /**
      * @var \Infinite\ImportBundle\Processor\ProcessorFactory
@@ -35,13 +40,13 @@ class Importer
     private $validator;
 
     public function __construct(
-        EntityManager $entityManager,
+        ManagerRegistry $managerRegistry,
         ProcessorFactory $processorFactory,
         ValidatorInterface $validator
     ) {
-        $this->entityManager = $entityManager;
         $this->processorFactory = $processorFactory;
         $this->validator = $validator;
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -61,7 +66,7 @@ class Importer
     }
 
     /**
-     * @param \Infinite\ImportBundle\Entity\ImportLine[] $iterator
+     * @param ImportLine[]|IterableResult $iterator
      * @param Import $import
      * @param ProcessorInterface $processor
      * @param callable $updateClosure
@@ -75,15 +80,36 @@ class Importer
 
         $import->setRunning(true);
         $import->setHeartbeat(new \DateTime);
-        $this->entityManager->flush($import);
+        $this->getEm()->flush($import);
+
         $importer->batchClean($import, $i);
 
         foreach ($iterator as $line) {
-            /** @var \Infinite\ImportBundle\Entity\ImportLine $line */
+            /** @var ImportLine $line */
             $line = $line[0];
 
-            $importer->importLine($import, $line);
-            $line->setDateProcessed(new \DateTime);
+            try {
+                $importer->importLine($import, $line);
+                $line->setDateProcessed(new \DateTime);
+            } catch (\Exception $e) {
+                $em = $this->getEm();
+                /** @var ImportLine $line */
+                $line = $em->merge($line);
+                /** @var Import $import */
+                $import = $em->merge($import);
+
+                $line->setError(true);
+                $line->addLog('A fatal error has occurred with processing this import.');
+                $line->addLog(sprintf('%s: %s', get_class($e), $e->getMessage()));
+                $import->setAbort(true);
+                $import->setErrors(true);
+                $import->setRunning(false);
+                $em->persist($import);
+                $em->persist($line);
+                $em->flush();
+
+                return;
+            }
 
             if ($line->isError()) {
                 $import->setErrors(true);
@@ -99,10 +125,12 @@ class Importer
 
             if ($import->isAbort() or $this->shouldBatch($processor, ++$i)) {
                 $import->setHeartbeat(new \DateTime);
-                $this->entityManager->flush();
-                $this->entityManager->clear();
 
-                $import = $this->entityManager->merge($import);
+                $em = $this->getEm();
+                $em->flush();
+                $em->clear();
+
+                $import = $em->merge($import);
                 $importer->batchClean($import, $i);
             }
 
@@ -117,12 +145,14 @@ class Importer
         }
         $import->setDateFinished(new \DateTime);
         $import->setRunning(false);
-        $this->entityManager->flush();
+
+        $em = $this->getEm();
+        $em->flush();
     }
 
     private function getIterator(Import $import)
     {
-        $qb = $this->entityManager->createQueryBuilder()
+        $qb = $this->getEm()->createQueryBuilder()
             ->select('il')
             ->from('Infinite\ImportBundle\Entity\ImportLine', 'il')
             ->where('IDENTITY(il.import) = :importId')
@@ -163,5 +193,13 @@ class Importer
         if ($errors->count()) {
             throw new \LogicException('Invalid import for processing');
         }
+    }
+
+    /**
+     * @return EntityManager
+     */
+    private function getEm()
+    {
+        return $this->managerRegistry->getManagerForClass(Import::class);
     }
 }

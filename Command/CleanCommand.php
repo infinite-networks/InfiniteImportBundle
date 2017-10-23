@@ -11,18 +11,17 @@
 
 namespace Infinite\ImportBundle\Command;
 
+use Infinite\ImportBundle\Entity\Import;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Cleans out data that is no longer needed
  */
 class CleanCommand extends ContainerAwareCommand
 {
-    /**
-     * @see Symfony\Component\Console\Command\Command::configure()
-     */
     protected function configure()
     {
         $this
@@ -33,21 +32,31 @@ class CleanCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $sql = <<<SQL
+        $imports = $this->getContainer()->get('doctrine')
+            ->getRepository(Import::class)
+            ->findBy([
+                'status' => Import::STATUS_FINISHED,
+            ]);
+
+        $killLines = <<<SQL
 DELETE il FROM ImportLine il
-LEFT JOIN Import i ON (il.import_id = i.id)
-WHERE
-	i.dateFinished IS NOT NULL AND
-	(
-		il.dateProcessed IS NULL OR
-		(
-			il.error = 0 AND
-			il.warning = 0
-		)
-	)
+WHERE il.import_id = :importId
 SQL;
 
+        $filesystem = new Filesystem();
         $connection = $this->getContainer()->get('database_connection');
-        $connection->executeQuery($sql);
+        $stmt = $connection->prepare($killLines);
+
+        /** @var Import $import */
+        foreach ($imports as $import) {
+            $stmt->bindValue('importId', $import->getId());
+            $stmt->execute();
+
+            if ($import->getAdditionalFilePath()) {
+                $filesystem->remove($import->getAdditionalFilePath());
+            }
+
+            $import->setDateCleaned(new \DateTime());
+        }
     }
 }

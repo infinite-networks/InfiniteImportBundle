@@ -52,6 +52,7 @@ class Processor
         $import->populateFromFile($command->file);
         $import->setLines($conversionResult->lines);
         $import->setUser($this->securityContext->getToken()->getUser());
+        $import->setAdditionalFilePath($conversionResult->additionalFilePath);
 
         $result = new UploadResult($import, $conversionResult);
 

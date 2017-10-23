@@ -14,6 +14,18 @@ namespace Infinite\ImportBundle\Converter;
 class ConversionResult
 {
     /**
+     * A converter may write additional files that need to be
+     * processed by the Importer, it is up to the converter to
+     * create a path and write files into that path. Setting the
+     * path here will make it available to the importer, and the
+     * CleanCommand will remove this path once the import is
+     * complete.
+     *
+     * @var string
+     */
+    public $additionalFilePath;
+
+    /**
      * Stores any errors.
      *
      * @var array

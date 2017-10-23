@@ -26,10 +26,18 @@ class Import
 {
     const STATUS_ERRORS = 'infinite_import.errors';
     const STATUS_FINISHED = 'infinite_import.finished';
+    const STATUS_CLOSED = 'infinite_import.closed';
     const STATUS_IMPORTING = 'infinite_import.importing';
     const STATUS_NEEDS_PROCESSING = 'infinite_import.needs_processing';
     const STATUS_READY_TO_START = 'infinite_import.ready_to_start';
     const STATUS_STALLED = 'infinite_import.stalled';
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     *
+     * @var \DateTime
+     */
+    private $dateCleaned;
 
     /**
      * @ORM\Column(type="integer")
@@ -38,6 +46,15 @@ class Import
      * @var int
      */
     protected $id;
+
+    /**
+     * A path to extra files that may have been written by the converter.
+     *
+     * @ORM\Column(type="string", nullable=true)
+     *
+     * @var string
+     */
+    private $additionalFilePath;
 
     /**
      * Not mapped. A property used by the importer to determine if it should abort
@@ -303,6 +320,10 @@ class Import
 
     public function getStatus()
     {
+        if ($this->dateCleaned) {
+            return static::STATUS_CLOSED;
+        }
+
         if ($this->dateFinished) {
             if ($this->errors) {
                 return static::STATUS_ERRORS;
@@ -561,5 +582,37 @@ class Import
     public function getMetadata()
     {
         return $this->metadata;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdditionalFilePath()
+    {
+        return $this->additionalFilePath;
+    }
+
+    /**
+     * @param string $additionalFilePath
+     */
+    public function setAdditionalFilePath($additionalFilePath)
+    {
+        $this->additionalFilePath = $additionalFilePath;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateCleaned()
+    {
+        return $this->dateCleaned;
+    }
+
+    /**
+     * @param \DateTime $dateCleaned
+     */
+    public function setDateCleaned($dateCleaned)
+    {
+        $this->dateCleaned = $dateCleaned;
     }
 }

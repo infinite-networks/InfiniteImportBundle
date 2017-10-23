@@ -12,6 +12,7 @@
 namespace Infinite\ImportBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -22,20 +23,18 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RunImportsCommand extends ContainerAwareCommand
 {
-    /**
-     * @see Symfony\Component\Console\Command\Command::configure()
-     */
     protected function configure()
     {
         $this
             ->setName('infinite:import:run')
             ->setDescription('Runs, or reruns any stalled or new import')
+            ->addArgument('importId', InputArgument::OPTIONAL)
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $import = $this->getImportToRun();
+        $import = $this->getImportToRun($input);
 
         if ($import) {
             /** @var \Symfony\Component\Console\Helper\ProgressHelper $progressHelper */
@@ -60,9 +59,14 @@ class RunImportsCommand extends ContainerAwareCommand
      *
      * @return \Infinite\ImportBundle\Entity\Import
      */
-    private function getImportToRun()
+    private function getImportToRun(InputInterface $input)
     {
-        $repository = $this->getContainer()->get('doctrine')->getRepository('Infinite\ImportBundle\Entity\Import');
+        $repository = $this->getContainer()->get('doctrine')->getRepository(Import::class);
+
+        if ($id = $input->getArgument('importId')) {
+            return $repository->find($id);
+        }
+
         $imports = $repository->findStalledOrNewImports();
 
         return reset($imports);

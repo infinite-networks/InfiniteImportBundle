@@ -22,6 +22,11 @@ abstract class AbstractImporter implements ImporterInterface
      */
     private $config;
 
+    public function afterBatch()
+    {
+        // No after batch functionality by default
+    }
+
     /**
      * This method is called when a batch has been imported and any clean up or
      * reinitialisation of variables is required for this processor.

@@ -18,6 +18,11 @@ use Infinite\ImportBundle\Entity\ImportLine;
 interface ImporterInterface
 {
     /**
+     * Runs after every batch, but before flush.
+     */
+    public function afterBatch();
+
+    /**
      * This method is called before every batch to allow the Importer state to
      * survive an EntityManager#clear() operation or get its state ready for
      * the import.

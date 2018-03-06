@@ -93,6 +93,9 @@ class Importer
                 $line->setDateProcessed(new \DateTime);
             } catch (\Exception $e) {
                 $em = $this->getEm();
+                // Ensure the batch doesnt write anything.
+                $em->clear();
+                $em = $this->getEm();
                 /** @var ImportLine $line */
                 $line = $em->merge($line);
                 /** @var Import $import */
@@ -127,6 +130,7 @@ class Importer
                 $import->setHeartbeat(new \DateTime);
 
                 $em = $this->getEm();
+                $importer->afterBatch();
                 $em->flush();
                 $em->clear();
 
@@ -147,6 +151,7 @@ class Importer
         $import->setRunning(false);
 
         $em = $this->getEm();
+        $importer->afterBatch();
         $em->flush();
     }
 

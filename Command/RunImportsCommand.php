@@ -13,6 +13,8 @@ namespace Infinite\ImportBundle\Command;
 
 use Infinite\ImportBundle\Entity\Import;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\ProgressHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -38,27 +40,26 @@ class RunImportsCommand extends ContainerAwareCommand
         $import = $this->getImportToRun($input);
 
         if ($import) {
-            /** @var \Symfony\Component\Console\Helper\ProgressHelper $progressHelper */
-            $progressHelper = $this->getHelperSet()->get('progress');
+            $progress = new ProgressBar($output, $import->getNumLines());
+            $progress->start();
+
             /** @var \Infinite\ImportBundle\Import\Importer $importer */
             $importer = $this->getContainer()->get('infinite_import.import.importer');
 
-            $progressHelper->start($output, $import->getNumLines());
-            $progressHelper->setRedrawFrequency(100);
-            $progressHelper->setCurrent($import->getLinesProcessed(), true);
+            $progress->advance($import->getLinesProcessed());
 
-            $importer->import($import, function () use ($progressHelper) {
-                $progressHelper->advance();
+            $importer->import($import, function () use ($progress) {
+                $progress->advance();
             });
 
-            $progressHelper->finish();
+            $progress->finish();
         }
     }
 
     /**
      * Returns a new or stalled import to run for this iteration of the command.
      *
-     * @return \Infinite\ImportBundle\Entity\Import
+     * @return Import
      */
     private function getImportToRun(InputInterface $input)
     {

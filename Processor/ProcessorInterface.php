@@ -14,6 +14,7 @@ namespace Infinite\ImportBundle\Processor;
 use Infinite\ImportBundle\Entity\Import;
 use Infinite\ImportBundle\Import\ImporterInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 
 interface ProcessorInterface
@@ -43,10 +44,10 @@ interface ProcessorInterface
      * Lets the processor determine if it should grant permission to the current user (as
      * supplied by the SecurityContext passed to this function).
      *
-     * @param SecurityContextInterface $context
+     * @param AuthorizationCheckerInterface $checker
      * @return boolean
      */
-    public function allowAccess(SecurityContextInterface $context);
+    public function allowAccess(AuthorizationCheckerInterface $checker);
 
     /**
      * Builds a ProcessCommand object for the given Import

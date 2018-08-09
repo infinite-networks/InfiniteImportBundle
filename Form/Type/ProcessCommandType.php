@@ -15,14 +15,15 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Infinite\ImportBundle\Processor\ProcessCommand;
 
 class ProcessCommandType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            /** @var \Infinite\ImportBundle\Processor\ProcessCommand $command */
+            /** @var ProcessCommand $command */
             $command = $event->getData();
             $form = $event->getForm();
 
@@ -40,20 +41,10 @@ class ProcessCommandType extends AbstractType
         $builder->add('submit', 'submit');
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Infinite\ImportBundle\Processor\ProcessCommand'
+            'data_class' => ProcessCommand::class
         ));
-    }
-
-    /**
-     * Returns the name of this type.
-     *
-     * @return string The name of this type
-     */
-    public function getName()
-    {
-        return 'infinite_import_process';
     }
 }

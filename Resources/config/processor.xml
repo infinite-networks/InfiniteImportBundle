@@ -4,15 +4,15 @@
 
     <services>
         <service id="infinite_import.processor_factory" class="Infinite\ImportBundle\Processor\ProcessorFactory">
-           <argument type="service" id="security.context" />
+           <argument type="service" id="security.authorization_checker" />
            <argument type="collection" /> <!-- Converters tagged with infinite_import.processor -->
         </service>
 
         <service id="infinite_import.form_type.process_command" class="Infinite\ImportBundle\Form\Type\ProcessCommandType">
-            <tag name="form.type" alias="infinite_import_process" />
+            <tag name="form.type" />
         </service>
         <service id="infinite_import.form_type.process_command_field" class="Infinite\ImportBundle\Form\Type\ProcessCommandFieldType">
-            <tag name="form.type" alias="infinite_import_process_field" />
+            <tag name="form.type" />
         </service>
     </services>
 </container>

@@ -8,14 +8,16 @@
         }
     ],
     "require": {
-        "symfony/framework-bundle": "~2.3",
-        "symfony/validator": "~2.3",
-        "white-october/pagerfanta-bundle": "1.0.*",
+        "symfony/framework-bundle": "~3.0",
+        "symfony/form": "~3.0",
+        "symfony/security": "~3.0",
+        "symfony/validator": "~3.0",
+        "white-october/pagerfanta-bundle": "~1.0",
         "doctrine/orm": "~2.5"
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0.x-dev"
+            "dev-master": "2.0.x-dev"
         }
     },
     "autoload": {

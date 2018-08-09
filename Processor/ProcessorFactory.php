@@ -12,8 +12,8 @@
 namespace Infinite\ImportBundle\Processor;
 
 use Infinite\ImportBundle\Entity\Import;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 
 class ProcessorFactory
 {
@@ -21,22 +21,18 @@ class ProcessorFactory
      * @var ProcessorInterface[]
      */
     private $processors = array();
-
-    /**
-     * @var \Symfony\Component\Security\Core\SecurityContextInterface
-     */
-    private $securityContext;
+    private $checker;
 
     /**
      * @param ProcessorInterface[] $processors
      */
-    public function __construct(SecurityContextInterface $securityContext, array $processors)
+    public function __construct(AuthorizationCheckerInterface $checker, array $processors)
     {
         foreach ($processors as $processor) {
             $this->processors[$processor->getKey()] = $processor;
         }
 
-        $this->securityContext = $securityContext;
+        $this->checker = $checker;
     }
 
     /**
@@ -51,7 +47,7 @@ class ProcessorFactory
         }
 
         $processor = $this->processors[$processorKey];
-        if (!$processor->allowAccess($this->securityContext)) {
+        if (!$processor->allowAccess($this->checker)) {
             throw new AccessDeniedException;
         }
 
@@ -70,7 +66,7 @@ class ProcessorFactory
         $processors = array();
 
         foreach ($this->processors as $processor) {
-            if ($processor->allowAccess($this->securityContext)) {
+            if ($processor->allowAccess($this->checker)) {
                 $processors[] = $processor;
             }
         }

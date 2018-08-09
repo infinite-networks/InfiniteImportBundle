@@ -13,11 +13,10 @@ namespace Infinite\ImportBundle\Processor;
 
 use Infinite\ImportBundle\Entity\Import;
 use Infinite\ImportBundle\Entity\ImportFieldMetadata;
-use Infinite\ImportBundle\Import\Importer;
 use Infinite\ImportBundle\Import\ImporterInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 abstract class AbstractProcessor implements ProcessorInterface
 {
@@ -46,10 +45,10 @@ abstract class AbstractProcessor implements ProcessorInterface
      * Lets the processor determine if it should grant permission to the current user (as
      * supplied by the SecurityContext passed to this function).
      *
-     * @param SecurityContextInterface $context
+     * @param AuthorizationCheckerInterface $checker
      * @return boolean
      */
-    public function allowAccess(SecurityContextInterface $context)
+    public function allowAccess(AuthorizationCheckerInterface $checker)
     {
         return true;
     }

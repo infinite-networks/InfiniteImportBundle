@@ -11,29 +11,31 @@
 
 namespace Infinite\ImportBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
+use Infinite\ImportBundle\Entity\Repository\ImportRepository;
+use Infinite\ImportBundle\Import\ImportScheduler;
 use Infinite\ImportBundle\View\ImportListView;
 use Infinite\ImportBundle\View\ImportViewView;
-use Pagerfanta\Adapter\DoctrineORMAdapter;
-use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Infinite\ImportBundle\Entity\Import;
 
 class ImportController extends BaseController
 {
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var EntityManager
      */
     public $doctrine;
 
     /**
-     * @var \Infinite\ImportBundle\Import\ImportScheduler
+     * @var ImportScheduler
      */
     public $importScheduler;
 
     /**
-     * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
+     * @var SessionInterface
      */
     public $session;
 
@@ -86,7 +88,7 @@ class ImportController extends BaseController
      * Views and shows information about a single Import.
      *
      * @param int $id
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function viewAction($id)
     {
@@ -102,8 +104,8 @@ class ImportController extends BaseController
 
     /**
      * @param int $id
-     * @return \Infinite\ImportBundle\Entity\Import
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @return Import
+     * @throws NotFoundHttpException
      */
     private function getImport($id)
     {
@@ -116,10 +118,10 @@ class ImportController extends BaseController
     }
 
     /**
-     * @return \Infinite\ImportBundle\Entity\Repository\ImportRepository
+     * @return ImportRepository
      */
     private function getRepository()
     {
-        return $this->doctrine->getRepository('Infinite\ImportBundle\Entity\Import');
+        return $this->doctrine->getRepository(Import::class);
     }
 }

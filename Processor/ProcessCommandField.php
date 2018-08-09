@@ -12,7 +12,7 @@
 namespace Infinite\ImportBundle\Processor;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\ExecutionContextInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Represents a data point required for an import that can be mapped to a piece of data
@@ -53,8 +53,10 @@ class ProcessCommandField
 
     public function isValid(ExecutionContextInterface $context)
     {
-        if ($this->required and null === $this->populateWith) {
-            $context->addViolationAt('populatedWith', 'A required selection is missing');
+        if ($this->required && null === $this->populateWith) {
+            $context->buildViolation('A required selection is missing')
+                ->atPath('populatedWith')
+                ->addViolation();
         }
     }
 

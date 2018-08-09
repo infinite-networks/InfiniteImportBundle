@@ -13,7 +13,8 @@ namespace Infinite\ImportBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Infinite\ImportBundle\Upload\UploadCommand;
 
 class UploadCommandType extends AbstractType
 {
@@ -28,20 +29,10 @@ class UploadCommandType extends AbstractType
         $builder->add('submit', 'submit');
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Infinite\ImportBundle\Upload\UploadCommand'
+            'data_class' => UploadCommand::class
         ));
-    }
-
-    /**
-     * Returns the name of this type.
-     *
-     * @return string The name of this type
-     */
-    public function getName()
-    {
-        return 'infinite_import_upload';
     }
 }

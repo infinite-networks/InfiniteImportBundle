@@ -12,31 +12,18 @@
 namespace Infinite\ImportBundle\Import;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Internal\Hydration\IterableResult;
-use Doctrine\ORM\ORMException;
 use Infinite\ImportBundle\Entity\Import;
 use Infinite\ImportBundle\Entity\ImportLine;
 use Infinite\ImportBundle\Processor\ProcessorFactory;
 use Infinite\ImportBundle\Processor\ProcessorInterface;
-use Symfony\Component\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class Importer
 {
-    /**
-     * @var ManagerRegistry
-     */
     private $managerRegistry;
-
-    /**
-     * @var \Infinite\ImportBundle\Processor\ProcessorFactory
-     */
     private $processorFactory;
-
-    /**
-     * @var \Symfony\Component\Validator\ValidatorInterface
-     */
     private $validator;
 
     public function __construct(
@@ -159,7 +146,7 @@ class Importer
     {
         $qb = $this->getEm()->createQueryBuilder()
             ->select('il')
-            ->from('Infinite\ImportBundle\Entity\ImportLine', 'il')
+            ->from(ImportLine::class, 'il')
             ->where('IDENTITY(il.import) = :importId')
             ->andWhere('il.dateProcessed IS NULL');
 

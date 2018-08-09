@@ -11,17 +11,19 @@
 
 namespace Infinite\ImportBundle\Form\Type;
 
+use Infinite\ImportBundle\Entity\Import;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Infinite\ImportBundle\Processor\ProcessCommandField;
 
 class ProcessCommandFieldType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var \Infinite\ImportBundle\Entity\Import $import */
+        /** @var Import $import */
         $import = $options['import'];
         $firstRow = $import->getFirstLine();
 
@@ -31,7 +33,7 @@ class ProcessCommandFieldType extends AbstractType
         }
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($choices) {
-            /** @var \Infinite\ImportBundle\Processor\ProcessCommandField $data */
+            /** @var ProcessCommandField $data */
             $data = $event->getData();
             $form = $event->getForm();
 
@@ -39,31 +41,20 @@ class ProcessCommandFieldType extends AbstractType
                 'choices' => $choices,
                 'required' => $data->required,
             );
-            $options['empty_value'] = 'Not provided';
+            $options['placeholder'] = 'Not provided';
 
             $form->add('populateWith', 'choice', $options);
         });
-
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Infinite\ImportBundle\Processor\ProcessCommandField'
+            'data_class' => ProcessCommandField::class
         ));
 
         $resolver->setRequired(array(
             'import'
         ));
-    }
-
-    /**
-     * Returns the name of this type.
-     *
-     * @return string The name of this type
-     */
-    public function getName()
-    {
-        return 'infinite_import_process_field';
     }
 }

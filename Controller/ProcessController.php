@@ -17,6 +17,7 @@ use Infinite\ImportBundle\View\ProcessStartView;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Infinite\ImportBundle\Entity\Import;
 
 /**
  * Handles the processing of files that have already been uploaded and converted to the
@@ -100,7 +101,7 @@ class ProcessController extends BaseController
         $view->import = $import;
         $view->processors = $this->processorFactory->getProcessors($import);
 
-        if (count($view->processors) == 1) {
+        if (count($view->processors) === 1) {
             $processor = reset($view->processors);
 
             return new RedirectResponse($this->router->generate('infinite_import_process_process', array(
@@ -134,6 +135,6 @@ class ProcessController extends BaseController
      */
     private function getRepository()
     {
-        return $this->doctrine->getRepository('Infinite\ImportBundle\Entity\Import');
+        return $this->doctrine->getRepository(Import::class);
     }
 }

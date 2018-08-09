@@ -13,24 +13,17 @@ namespace Infinite\ImportBundle\Upload;
 
 use Infinite\ImportBundle\Entity\Import;
 use Infinite\ImportBundle\Converter\ConverterFactory;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class Processor
 {
-    /**
-     * @var ConverterFactory
-     */
     private $converterFactory;
+    private $tokenStorage;
 
-    /**
-     * @var \Symfony\Component\Security\Core\SecurityContextInterface
-     */
-    private $securityContext;
-
-    public function __construct(ConverterFactory $converterFactory, SecurityContextInterface $securityContext)
+    public function __construct(ConverterFactory $converterFactory, TokenStorageInterface $tokenStorage)
     {
         $this->converterFactory = $converterFactory;
-        $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -51,11 +44,11 @@ class Processor
         $import = new Import;
         $import->populateFromFile($command->file);
         $import->setLines($conversionResult->lines);
-        $import->setUser($this->securityContext->getToken()->getUser());
+
+        $token = $this->tokenStorage->getToken();
+        $import->setUser($token ? $token->getUser() : null);
         $import->setAdditionalFilePath($conversionResult->additionalFilePath);
 
-        $result = new UploadResult($import, $conversionResult);
-
-        return $result;
+        return new UploadResult($import, $conversionResult);
     }
 }

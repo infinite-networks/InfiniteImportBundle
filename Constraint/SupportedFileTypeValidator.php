@@ -36,7 +36,7 @@ class SupportedFileTypeValidator extends ConstraintValidator
         }
 
         if (!$value instanceof File) {
-            throw new UnexpectedTypeException($value, 'Symfony\Component\HttpFoundation\File\File');
+            throw new UnexpectedTypeException($value, File::class);
         }
 
         if (!$this->converterFactory->supports($value)) {

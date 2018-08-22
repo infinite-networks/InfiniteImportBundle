@@ -10,7 +10,7 @@
 
         <service id="infinite_import.import.scheduler" class="Infinite\ImportBundle\Import\ImportScheduler">
             <argument type="service" id="infinite_import.import.importer" />
-            <argument type="service" id="monolog.logger" />
+            <argument type="service" id="logger" />
         </service>
 
         <service id="infinite_import.import.importer" class="Infinite\ImportBundle\Import\Importer">

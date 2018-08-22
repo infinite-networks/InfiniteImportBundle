@@ -12,6 +12,9 @@
 namespace Infinite\ImportBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Infinite\ImportBundle\Upload\UploadCommand;
@@ -20,13 +23,13 @@ class UploadCommandType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('file', 'file');
+        $builder->add('file', FileType::class);
 
-        $builder->add('hasHeaders', 'checkbox', array(
+        $builder->add('hasHeaders', CheckboxType::class, array(
             'required' => false,
         ));
 
-        $builder->add('submit', 'submit');
+        $builder->add('submit', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)

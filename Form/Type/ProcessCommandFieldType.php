@@ -13,6 +13,7 @@ namespace Infinite\ImportBundle\Form\Type;
 
 use Infinite\ImportBundle\Entity\Import;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -29,7 +30,7 @@ class ProcessCommandFieldType extends AbstractType
 
         $choices = array();
         foreach ($firstRow->getData() as $column => $value) {
-            $choices[$column] = sprintf('%s — %s', $column, $value);
+            $choices[sprintf('%s — %s', $column, $value)] = $column;
         }
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($choices) {
@@ -40,10 +41,11 @@ class ProcessCommandFieldType extends AbstractType
             $options = array(
                 'choices' => $choices,
                 'required' => $data->required,
+                'choices_as_values' => true,
             );
             $options['placeholder'] = 'Not provided';
 
-            $form->add('populateWith', 'choice', $options);
+            $form->add('populateWith', ChoiceType::class, $options);
         });
     }
 

@@ -3,6 +3,16 @@ infinite_import_list:
     defaults:
         _controller: infinite_import.controller.import:listAction
 
+infinite_import_create:
+    path: /create
+    defaults:
+        _controller: infinite_import.controller.upload:createAction
+
+infinite_import_upload:
+    path: /upload/{processorKey}
+    defaults:
+        _controller: infinite_import.controller.upload:uploadAction
+
 infinite_import_view:
     path: /{id}
     defaults:
@@ -16,3 +26,13 @@ infinite_import_start:
         _controller: infinite_import.controller.import:startAction
     requirements:
         methods: POST
+
+infinite_import_process_process:
+    path: /process/{id}/{processor}
+    defaults:
+        _controller: infinite_import.controller.process:processAction
+
+infinite_import_process_list:
+    path: /process
+    defaults:
+        _controller: infinite_import.controller.process:listAction

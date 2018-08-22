@@ -11,7 +11,10 @@
 
 namespace Infinite\ImportBundle\Controller;
 
+use Infinite\ImportBundle\Form\Type\UploadCommandType;
+use Infinite\ImportBundle\Processor\ProcessorFactory;
 use Infinite\ImportBundle\Upload\UploadCommand;
+use Infinite\ImportBundle\View\UploadCreateView;
 use Infinite\ImportBundle\View\UploadUploadView;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,9 +43,9 @@ class UploadController extends BaseController
     public $processor;
 
     /**
-     * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
+     * @var \Infinite\ImportBundle\Processor\ProcessorFactory
      */
-    public $session;
+    public $processorFactory;
 
     /**
      * Presents the user with an upload form to upload a new file to be processed for an
@@ -51,9 +54,27 @@ class UploadController extends BaseController
      * @param Request $request
      * @return UploadUploadView
      */
-    public function uploadAction(Request $request)
+    public function createAction(Request $request)
+    {
+        $view = new UploadCreateView;
+        $view->processors = $this->processorFactory->getProcessors();
+
+        return $this->templating->renderResponse('InfiniteImportBundle:Upload:create.html.twig', array(
+            'data' => $view
+        ));
+    }
+
+    /**
+     * Presents the user with an upload form to upload a new file to be processed for an
+     * import. The file format will be validated by the bundle that it can be processed.
+     *
+     * @param Request $request
+     * @return UploadUploadView
+     */
+    public function uploadAction(Request $request, $processorKey)
     {
         $command = new UploadCommand;
+        $command->processor = $this->processorFactory->getProcessor($processorKey);
         $form = $this->getUploadForm($request, $command);
 
         $view = new UploadUploadView;
@@ -66,8 +87,9 @@ class UploadController extends BaseController
                 $this->doctrine->persist($result->import);
                 $this->doctrine->flush();
 
-                return new RedirectResponse($this->router->generate('infinite_import_process_start', array(
-                    'id' => $result->import->getId()
+                return new RedirectResponse($this->router->generate('infinite_import_process_process', array(
+                    'id' => $result->import->getId(),
+                    'processor' => $result->import->getProcessorKey(),
                 )));
             }
 
@@ -88,7 +110,7 @@ class UploadController extends BaseController
      */
     protected function getUploadForm(Request $request, UploadCommand $command)
     {
-        $form = $this->formFactory->create('infinite_import_upload', $command);
+        $form = $this->formFactory->create(UploadCommandType::class, $command);
         $form->handleRequest($request);
 
         return $form;

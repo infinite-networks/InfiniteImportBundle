@@ -11,6 +11,8 @@
 
 namespace Infinite\ImportBundle\Upload;
 
+use Infinite\ImportBundle\Processor\ProcessorInterface;
+
 /**
  * This command represents an upload activity where the file should then be processed into
  * the intermediate format.
@@ -30,4 +32,9 @@ class UploadCommand
      * @var bool
      */
     public $hasHeaders = true;
+
+    /**
+     * @var ProcessorInterface
+     */
+    public $processor;
 }

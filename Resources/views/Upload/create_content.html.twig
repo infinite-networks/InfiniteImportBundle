@@ -1,0 +1,35 @@
+{% extends "InfiniteImportBundle::layout.html.twig" %}
+
+{% block infinite_import_content %}
+
+<div class="row">
+    <div class="col-md-6">
+        {% if data.processors %}
+            <strong>Please select what kind of import you would like to run.</strong>
+            {% for processor in data.processors %}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <strong><i class="fa fa-file"></i> {{ ('processor_' ~ processor.key) | trans }}</strong>
+                    </div>
+
+                    <div class="panel-body">
+                        <a href="{{ path('infinite_import_upload', {processorKey: processor.key}) }}" class="btn btn-default">
+                            Start import
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <strong><i class="fa fa-warning"></i> No Processors Available</strong>
+                </div>
+
+                <div class="panel-body">
+                    <p>There are no processors registered.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock infinite_import_content %}

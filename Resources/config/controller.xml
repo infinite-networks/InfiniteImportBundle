@@ -23,6 +23,7 @@
             <property name="doctrine" type="service" id="doctrine.orm.entity_manager" />
             <property name="formFactory" type="service" id="form.factory" />
             <property name="processor" type="service" id="infinite_import.upload.processor" />
+            <property name="processorFactory" type="service" id="infinite_import.processor_factory" />
         </service>
     </services>
 </container>

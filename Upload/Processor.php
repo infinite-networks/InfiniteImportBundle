@@ -42,6 +42,7 @@ class Processor
         $conversionResult = $this->converterFactory->convert($command->file, $command->hasHeaders);
 
         $import = new Import;
+        $import->setProcessorKey($command->processor->getKey());
         $import->populateFromFile($command->file);
         $import->setLines($conversionResult->lines);
 

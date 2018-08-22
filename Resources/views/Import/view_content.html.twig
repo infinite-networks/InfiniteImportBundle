@@ -47,7 +47,7 @@
                         </form>
                         {% endif %}
                         {% if import.status not in [constant('STATUS_FINISHED', import), constant('STATUS_ERRORS', import)] %}
-                        <a class="btn btn-info btn-block" href="{{ path('infinite_import_process_start', { id: import.id }) }}"><i class="fa fa-cog"></i> {% if import.status == constant('STATUS_NEEDS_PROCESSING', import) %}C{% else %}Rec{% endif %}onfigure Import</a>
+                        <a class="btn btn-info btn-block" href="{{ path('infinite_import_process_process', { id: import.id, processor: import.processorKey }) }}"><i class="fa fa-cog"></i> {% if import.status == constant('STATUS_NEEDS_PROCESSING', import) %}C{% else %}Rec{% endif %}onfigure Import</a>
                         {% endif %}
                     </td>
                 </tr>

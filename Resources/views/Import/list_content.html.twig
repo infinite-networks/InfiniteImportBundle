@@ -2,16 +2,16 @@
 {% import "InfiniteImportBundle::macros.html.twig" as import_macros %}
 
 {% block infinite_import_content %}
-<div class="row">
-    <div class="col-md-6">
-        <section class="panel panel-default">
-            <div class="panel-heading">
-                <strong>
-                    <span class="fa fa-upload"></span>
-                    Upload and Import Data
-                </strong>
-            </div>
+    <div class="row">
+        <div class="span6">
+            <strong>
+                <span class="fa fa-upload"></span>
+                Upload and Import Data
+            </strong><br>
 
+            <a class="btn btn-primary" href="{{ path('infinite_import_create') }}">Start a new import <i class="fa fa-arrow-right"></i></a>
+        </div>
+        <div class="span6">
             <div class="panel-body">
                 <p>
                     With this importer, it is possible to upload and import data from
@@ -20,74 +20,52 @@
                     interface to configure which fields in your file match to the expected
                     and required information for the importer.
                 </p>
-
-                <a class="btn btn-primary" href="{{ path('infinite_import_upload') }}"><i class="fa fa-upload"></i> Upload new file</a>
             </div>
-        </section>
+        </div>
     </div>
 
-    {% block importer_help %}
-    <div class="col-md-6">
-        <section class="panel panel-info">
-            <div class="panel-heading">
-                <strong>
-                    <span class="fa fa-question"></span>
-                    About the Importer
-                </strong>
-            </div>
+    <section class="panel panel-default">
+        <div class="panel-heading">
+            <strong>
+                <span class="fa fa-cloud-upload"></span>
+                Previous Imports
+            </strong>
+        </div>
 
-            <div class="panel-body">
-                <p>
-                    Help about the importer and what it actually does here.
-                </p>
-            </div>
-        </section>
-    </div>
-    {% endblock importer_help %}
-</div>
+        <div class="panel-body">
+            <p>
+                This list shows previous imports performed by your user, and their statuses
+                including any errors that may have been encountered.
+            </p>
+        </div>
 
-<section class="panel panel-default">
-    <div class="panel-heading">
-        <strong>
-            <span class="fa fa-cloud-upload"></span>
-            Previous Imports
-        </strong>
-    </div>
-
-    <div class="panel-body">
-        <p>
-            This list shows previous imports performed by your user, and their statuses
-            including any errors that may have been encountered.
-        </p>
-    </div>
-
-    <table class="table">
-        <thead><tr>
-            <th>Filename</th>
-            <th>Status</th>
-            <th>Uploaded</th>
-            <th>Started</th>
-            <th>Finished</th>
-            <th>Size</th>
-            <th>Processed / Total Lines</th>
-        </tr></thead>
-        <tbody>
-        {% for import in data.imports %}
-            <tr class="{{ import_macros.import_class(import) }}">
-                <td><a href="{{ import.processorKey ? path('infinite_import_view', { id: import.id }) : path('infinite_import_process_start', { id: import.id }) }}">{{ import.filename }}</a></td>
-                <td>{{ import.status | trans }}</td>
-                <td>{{ import.dateUploaded.format(site.formats.datetime) }}</td>
-                <td>{% if not import.dateStarted %}Not started{% else %}{{ import.dateStarted.format('c') }}{% endif %}</td>
-                <td>{% if not import.dateFinished %}Not finished{% else %}{{ import.dateFinished.format('c') }}{% endif %}</td>
-                <td>{{ import.size }} bytes</td>
-                <td>{{ import.linesProcessed }} / {{ import.numLines }}</td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="7">No imports have been uploaded.</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</section>
+        <table class="table">
+            <thead><tr>
+                <th>Filename</th>
+                <th>Status</th>
+                <th>Uploaded</th>
+                <th>Started</th>
+                <th>Finished</th>
+                <th>Size</th>
+                <th>Processed / Total Lines</th>
+            </tr></thead>
+            <tbody>
+            {% for import in data.imports %}
+                <tr class="{{ import_macros.import_class(import) }}">
+                    <td><a href="{{ import.processorKey ? path('infinite_import_view', { id: import.id }) : path('infinite_import_process_start', { id: import.id }) }}">{{ import.filename }}</a></td>
+                    <td>{{ import.status | trans }}</td>
+                    <td>{{ import.dateUploaded.format(site.formats.datetime) }}</td>
+                    <td>{% if not import.dateStarted %}Not started{% else %}{{ import.dateStarted.format('c') }}{% endif %}</td>
+                    <td>{% if not import.dateFinished %}Not finished{% else %}{{ import.dateFinished.format('c') }}{% endif %}</td>
+                    <td>{{ import.size }} bytes</td>
+                    <td>{{ import.linesProcessed }} / {{ import.numLines }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">No imports have been uploaded.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
 {% endblock infinite_import_content %}

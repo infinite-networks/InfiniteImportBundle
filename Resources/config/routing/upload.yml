@@ -1,4 +1,0 @@
-infinite_import_upload:
-    path: /upload
-    defaults:
-        _controller: infinite_import.controller.upload:uploadAction

@@ -13,6 +13,7 @@ namespace Infinite\ImportBundle\Processor;
 
 use Infinite\ImportBundle\Entity\Import;
 use Infinite\ImportBundle\Entity\ImportFieldMetadata;
+use Infinite\ImportBundle\Form\Type\ProcessCommandType;
 use Infinite\ImportBundle\Import\ImporterInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +24,7 @@ abstract class AbstractProcessor implements ProcessorInterface
     /**
      * The name of the form to be used for the process form type.
      */
-    const PROCESS_FORM = 'infinite_import_process';
+    const PROCESS_FORM = ProcessCommandType::class;
 
     /**
      * @var \Symfony\Component\Form\FormFactoryInterface

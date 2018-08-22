@@ -90,32 +90,6 @@ class ProcessController extends BaseController
     }
 
     /**
-     * Starts the processing of an actual upload by presenting the user with a list of
-     * processors available.
-     */
-    public function startAction($id)
-    {
-        $import = $this->getImport($id);
-
-        $view = new ProcessStartView;
-        $view->import = $import;
-        $view->processors = $this->processorFactory->getProcessors($import);
-
-        if (count($view->processors) === 1) {
-            $processor = reset($view->processors);
-
-            return new RedirectResponse($this->router->generate('infinite_import_process_process', array(
-                'id' => $import->getId(),
-                'processor' => $processor->getKey()
-            )));
-        }
-
-        return $this->templating->renderResponse('InfiniteImportBundle:Process:start.html.twig', array(
-            'data' => $view,
-        ));
-    }
-
-    /**
      * @param  int                                                           $id
      * @return \Infinite\ImportBundle\Entity\Import
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException

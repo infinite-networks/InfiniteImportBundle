@@ -81,7 +81,11 @@ class Importer
             } catch (\Exception $e) {
                 $em = $this->getEm();
                 // Ensure the batch doesnt write anything.
-                $em->clear();
+                if ($em->isOpen()) {
+                    $em->clear();
+                } else {
+                    $this->resetEm();
+                }
                 $em = $this->getEm();
                 /** @var ImportLine $line */
                 $line = $em->merge($line);
@@ -193,5 +197,20 @@ class Importer
     private function getEm()
     {
         return $this->managerRegistry->getManagerForClass(Import::class);
+    }
+
+    /**
+     * @return EntityManager
+     */
+    private function resetEm()
+    {
+        /** @var EntityManager $manager */
+        foreach ($this->managerRegistry->getManagers() as $managerName => $manager) {
+            if (!$manager->getMetadataFactory()->isTransient(Import::class)) {
+                $this->managerRegistry->resetManager($managerName);
+
+                return null;
+            }
+        }
     }
 }

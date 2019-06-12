@@ -57,8 +57,8 @@
         {% else %}
             {% for metadata in import.fieldMetadata %}
                 <tr>
-                    <td>{{ metadata.field }}{% if metadata.populateWith is not sameas(null) %} &rarr; {{ metadata.populateWith }}{% endif %}</td>
-                    <td>{% if metadata.populateWith is not sameas(null) %}{{ line.data[metadata.populateWith] }}{% else %}Not provided{% endif %}</td>
+                    <td>{{ metadata.field }}{% if metadata.populateWith is not same as(null) %} &rarr; {{ metadata.populateWith }}{% endif %}</td>
+                    <td>{% if metadata.populateWith is not same as(null) %}{{ line.data[metadata.populateWith] }}{% else %}Not provided{% endif %}</td>
                 </tr>
             {% else %}
                 <tr>

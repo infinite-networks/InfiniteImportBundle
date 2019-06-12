@@ -30,11 +30,11 @@ class ProcessCommandType extends AbstractType
             $form = $event->getForm();
 
             $form->add('fields', CollectionType::class, array(
-                'type' => ProcessCommandFieldType::class,
+                'entry_type' => ProcessCommandFieldType::class,
                 'allow_add' => false,
                 'allow_delete' => false,
                 'prototype' => false,
-                'options' => array(
+                'entry_options' => array(
                     'import' => $command->import,
                 )
             ));

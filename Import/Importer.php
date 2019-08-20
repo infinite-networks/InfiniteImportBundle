@@ -184,7 +184,7 @@ class Importer
      */
     private function validate(Import $import)
     {
-        $errors = $this->validator->validate($import, array('import'));
+        $errors = $this->validator->validate($import, null, array('import'));
 
         if ($errors->count()) {
             throw new \LogicException('Invalid import for processing');

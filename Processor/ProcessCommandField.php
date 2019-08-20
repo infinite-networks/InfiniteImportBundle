@@ -17,8 +17,6 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * Represents a data point required for an import that can be mapped to a piece of data
  * supplied by an import.
- *
- * @Assert\Callback(methods={"isValid"})
  */
 class ProcessCommandField
 {
@@ -51,6 +49,9 @@ class ProcessCommandField
         $this->required = $required;
     }
 
+    /**
+     * @Assert\Callback(methods={"isValid"})
+     */
     public function isValid(ExecutionContextInterface $context)
     {
         if ($this->required && null === $this->populateWith) {
